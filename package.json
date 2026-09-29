@@ -1,0 +1,8 @@
+{
+  "name": "festival-algorithm-classroom",
+  "version": "1.0.0",
+  "private": true,
+  "description": "五年级第4课奇趣游园会课堂游戏",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": { "start": "node --no-warnings server.cjs", "test": "node --no-warnings --test tests/*.test.cjs" }
+}

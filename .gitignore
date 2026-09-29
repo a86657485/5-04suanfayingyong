@@ -1,0 +1,9 @@
+runtime/
+backups/
+roster.private.json
+.DS_Store
+.playwright-cli/
+node_modules/
+.env
+.env.*
+assets/*.png
