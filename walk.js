@@ -34,7 +34,6 @@
    const token=request,waypoints=[{...position},...path.map(p=>({...p}))];
    const destination=waypoints.at(-1),point=map.cellToPercent(destination);
    if(marker){marker.style.left=`${point.x}%`;marker.style.top=`${point.y}%`;marker.hidden=false;}
-   if(reduced.matches){position={...destination};render();if(marker)marker.hidden=true;onPosition?.({...position});return Promise.resolve({arrived:true,position:{...position}});}
    guide.classList.add('walking');visitor.classList.add('walking');
    let next=1,last=0,lastSaved=0;
    return new Promise(resolve=>{
