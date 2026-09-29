@@ -17,13 +17,6 @@
 .map-scene{cursor:crosshair}.hotspot{cursor:pointer}.walk-marker{position:absolute;z-index:4;width:24px;height:14px;border:3px solid #ffd06a;border-radius:50%;background:rgba(255,255,255,.35);box-shadow:0 0 0 2px #154f4e,0 2px 8px #183d42;transform:translate(-50%,-50%);pointer-events:none}
 .map-character.walking{animation:walk-hop .22s ease-in-out infinite alternate}
 @keyframes walk-hop{from{translate:0 0}to{translate:0 -2px}}
-.route-layer .modeled-road{fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.88}
-.route-layer .modeled-road.edge{stroke:#74563d;stroke-width:2.7}
-.route-layer .modeled-road.surface{stroke:#f5deb0;stroke-width:2.1}
-.route-layer .modeled-road.east.edge{stroke:#655178}
-.route-layer .modeled-road.east.surface{stroke:#e8d4ef}
-.route-layer .modeled-road.planks{stroke:#9e7b51;stroke-width:2.05;stroke-dasharray:.12 .55;opacity:.38}
-.route-layer .modeled-road.east.planks{stroke:#806596;stroke-dasharray:.2 .75}
 .gate-foreground{position:absolute;inset:0;z-index:5;pointer-events:none;background:url('/assets/game-map-paths.webp') center/100% 100% no-repeat;clip-path:polygon(43% 69%,47% 67%,52% 68%,57% 67%,61% 70%,64% 78%,60% 81%,42% 81%,40% 77%)}
 .barrier{left:47%;top:61%}
 /* Conversation and optional application halls */

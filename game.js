@@ -61,15 +61,7 @@ function updateMap(stage){
  boothBadge.hidden=!boothTopic||!['service','complete'].includes(stage);
  if(boothTopic)boothBadge.textContent=R.topics[boothTopic]?.label||'';
  $('barrier').hidden=!(R.stageOf(state)==='nav'&&state.nav.phase===2);
- const routeLayer=$('route-layer');routeLayer.replaceChildren();
- for(const [kind,points] of Object.entries(WalkMap.modeledLinks)){
-  const trace=points.map(p=>{const at=WalkMap.cellToPercent(p);return `${at.x},${at.y*WalkMap.height/100}`;}).join(' ');
-  for(const layer of ['edge','surface','planks']){
-   const line=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-   line.setAttribute('points',trace);line.setAttribute('class',`modeled-road ${kind} ${layer}`);
-   routeLayer.append(line);
-  }
- }
+ $('route-layer').replaceChildren();
  document.querySelectorAll('.hotspot').forEach(b=>{const st=b.dataset.stage;b.classList.toggle('active',st===stage);b.classList.toggle('done',!!state[st]?.done);b.classList.toggle('locked',st!==R.stageOf(state)&&!state[st]?.done);});
  document.querySelectorAll('.hall-hotspot').forEach(b=>b.classList.toggle('active',stage===`hall:${b.dataset.hall}`));
  const scene=stage===R.stageOf(state)?R.dialogueFor(state):null;

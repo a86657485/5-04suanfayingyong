@@ -16,7 +16,6 @@ const westLink=[landmarks.greenhouse,{x:26,y:14},{x:34,y:16},{x:42,y:17},{x:48,y
 const eastLink=[landmarks.medical,{x:74,y:16},{x:67,y:16},{x:60,y:17},{x:55,y:16},landmarks.plaza];
 const west=[...gate,{x:44,y:39},{x:40,y:37},{x:36,y:34},{x:32,y:31},{x:28,y:29},{x:23,y:28},{x:19,y:25},{x:18,y:22},{x:20,y:18},...westLink];
 const east=[...gate,{x:60,y:39},{x:66,y:37},{x:70,y:35},{x:70,y:32},{x:66,y:29},{x:65,y:26},{x:68,y:22},...eastLink];
-const modeledLinks={west:westLink,east:eastLink};
 const sideRoads=[
  [{x:32,y:31},landmarks.notice],
  [{x:70,y:32},landmarks.recommendation],
@@ -89,6 +88,6 @@ function namedRoute(id,closed=false){
 function percentToCell(x,y){return {x:Math.max(0,Math.min(width-1,Math.round(x*(width-1)/100))),y:Math.max(0,Math.min(height-1,Math.round(y*(height-1)/100)))};}
 function cellToPercent(point){return {x:point.x/(width-1)*100,y:point.y/(height-1)*100};}
 
-const walkMapApi={width,height,landmarks,modeledLinks,makeGrid,nearestWalkable,findPath,namedRoute,percentToCell,cellToPercent};
+const walkMapApi={width,height,landmarks,makeGrid,nearestWalkable,findPath,namedRoute,percentToCell,cellToPercent};
 if(typeof module!=='undefined'&&module.exports)module.exports=walkMapApi;
 if(typeof window!=='undefined')window.WalkMap=walkMapApi;
