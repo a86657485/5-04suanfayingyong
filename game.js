@@ -5,6 +5,8 @@ const tabs=[['search','找活动'],['nav','带游客'],['reco','推荐下一站'
 const hints={search:['回看游客手里的线索和他说的愿望。','想一想：是拍照留念，还是通过照片认识植物？','先试“植物＋识别”，再打开海报核对活动内容。'],nav:['游客这次最看重什么？','先排除走不了的路，再比较同一列数据。','“尽快”比较分钟；“少走路”比较米。'],reco:['比较不同游客过去参加过哪些项目。','过去记录能提供建议，但游客今天说的话也很重要。','先看哪类记录最多；如果游客明确提出新需求，按当前需求调整。'],service:['先看服务亭要帮助谁。','信息、算法处理和游客获得的帮助要连起来。','打开下方资料卡，逐项匹配同一服务主题。']};
 let state=null,student=null,awards=[],activityPoints=0,viewStage='search',queue=[],syncing=false,exitData=null,exitResult=null,serviceDraft=null;
 let cacheKey='',walker=null,navRun=0,lastRenderedKey='';
+let hallIntroMode=false;
+const introducedHalls=new Set();
 const pageEventPrefix=`festival-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 let pageEventCount=0;
 function nextEventId(){return `${pageEventPrefix}-${++pageEventCount}-${Math.random().toString(36).slice(2)}`;}
@@ -81,6 +83,7 @@ function render(){
  const stage=viewStage;
  const hallId=galleryView?stage.slice(5):null;
  const hall=hallId==='hub'?null:window.GalleryModel.halls.find(x=>x.id===hallId);
+ document.querySelector('.mission-column').classList.toggle('hall-story-mode',galleryView&&hallIntroMode&&hallId!=='hub');
  $('student-name').textContent=`${student.classId}班 · ${student.name}`;
  $('points-pill').textContent=`印章积分 ${activityPoints}`;
  $('map-title').textContent=galleryView?(hall?.name||'自由探索体验馆'):titles[stage];
@@ -97,20 +100,28 @@ function render(){
  renderHints(stage);updateMap(stage);
  $('hint-panel').hidden=galleryView;
  const scene=R.dialogueFor(state),phase=stage==='search'?state.search.guest:stage==='nav'?state.nav.phase:stage==='reco'?state.reco.phase:0;
- const viewKey=`${stage}:${phase}:${scene&&!scene.done&&stage===current?'dialogue':'task'}`;
+ const viewKey=galleryView?`${stage}:${hallIntroMode?'intro':'demo'}`:`${stage}:${phase}:${scene&&!scene.done&&stage===current?'dialogue':'task'}`;
  if(viewKey!==lastRenderedKey)$('mission-content').scrollTop=0;
  if(viewKey!==lastRenderedKey&&!galleryView&&scene&&!scene.done)$('feedback').textContent=`${scene.npc}在等你回应。先听他的需要，再决定下一步。`;
  lastRenderedKey=viewKey;
 }
 function renderGallery(hallId){
  if(hallId==='hub'){
-  $('mission-intro').textContent='走进不同馆，亲手改变信息与条件，观察算法输出。选做馆不影响本课主线完成。';
+  $('mission-intro').textContent='每座馆先听一段故事，看算法处理信息的图解，再亲手体验。选做馆不影响主线完成。';
   $('mission-content').innerHTML=`<div class="gallery-hub">${window.GalleryModel.halls.map(hall=>{const count=state.gallery?.records?.[hall.id]?.length||0;return `<div class="gallery-card"><strong>${esc(hall.name)}</strong><p>${esc(hall.short)}</p><small>${count?`已运行${count}次`:'尚未体验'}</small><button class="secondary-button" data-hall="${hall.id}">走进${esc(hall.name)}</button></div>`;}).join('')}</div>`;
   return;
  }
  const hall=window.GalleryModel.halls.find(x=>x.id===hallId),records=state.gallery?.records?.[hallId]||[];
+ if(hallIntroMode){
+  $('mission-intro').textContent=`欢迎来到${hall.place}。先听馆长介绍，看看算法在这里帮人做什么。`;
+  $('mission-content').innerHTML=window.GalleryUI.renderIntro(hallId);
+  $('feedback').textContent='先看图解中的输入、处理和结果，再进入体验。';
+  $('feedback').classList.remove('warn');
+  return;
+ }
  $('mission-intro').textContent=`${hall.place} · ${hall.short}。每次只改一个条件，更容易看清结果为什么变化。`;
  $('mission-content').innerHTML=window.GalleryUI.renderHall(hallId,records);
+ if(!records.length){$('feedback').textContent='选一个条件运行，再观察算法的输出。';$('feedback').classList.remove('warn');}
  window.GalleryUI.afterRender(hallId,records.at(-1));
 }
 function renderDialogue(scene){
@@ -182,7 +193,7 @@ document.addEventListener('click',event=>{
   const id=b.dataset.hall;
   if(id==='hub'){viewStage='hall:hub';render();return;}
   const hall=window.GalleryModel.halls.find(x=>x.id===id);if(!hall)return;
-  walker.moveTo(WalkMap.landmarks[hall.landmark],R.stageOf(state)==='nav'&&state.nav.phase===2).then(result=>{if(result.arrived){viewStage=`hall:${id}`;render();}});
+  walker.moveTo(WalkMap.landmarks[hall.landmark],R.stageOf(state)==='nav'&&state.nav.phase===2).then(result=>{if(result.arrived){viewStage=`hall:${id}`;hallIntroMode=!introducedHalls.has(id);render();}});
   return;
  }
  if(b.dataset.stage){const st=b.dataset.stage,current=R.stageOf(state);if(st===current||state[st]?.done||st==='complete'&&current==='complete'){
@@ -192,7 +203,9 @@ document.addEventListener('click',event=>{
    }else{viewStage=st;render();}
   }else{$('feedback').textContent='先完成当前游客的委托，再前往这个地点。';$('feedback').classList.add('warn');}return;}
  const action=b.dataset.action;
- if(action==='search-query'){const terms=[...document.querySelectorAll('#term-choices input:checked')].map(x=>x.value);send({type:'search/query',terms});}
+ if(action==='gallery-enter'){introducedHalls.add(viewStage.slice(5));hallIntroMode=false;render();}
+ else if(action==='gallery-intro'){hallIntroMode=true;render();}
+ else if(action==='search-query'){const terms=[...document.querySelectorAll('#term-choices input:checked')].map(x=>x.value);send({type:'search/query',terms});}
  else if(action==='dialogue-choice')send({type:'dialogue/choose',id:b.dataset.id});
  else if(action==='search-invite')send({type:'search/invite',id:b.dataset.id});
  else if(action==='search-reason')send({type:'search/reason',reason:b.dataset.value});

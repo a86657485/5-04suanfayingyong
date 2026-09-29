@@ -1,12 +1,20 @@
 'use strict';
 const halls=[
- {id:'recognition',name:'图像识别馆',place:'植物馆',landmark:'greenhouse',short:'观察特征，匹配候选'},
- {id:'translation',name:'语言翻译馆',place:'语言小屋',landmark:'translation',short:'看词块如何转换'},
- {id:'shopping',name:'购物推荐馆',place:'小镇商店',landmark:'recommendation',short:'改变浏览记录，看推荐'},
- {id:'sports',name:'运动数据馆',place:'运动角',landmark:'sports',short:'调阈值，数运动峰值'},
- {id:'art',name:'图像艺术馆',place:'画室',landmark:'art',short:'亲手给图像换效果'},
- {id:'medical',name:'影像辅助馆',place:'健康角',landmark:'medical',short:'模拟标记亮点并复核'}
+ {id:'recognition',name:'图像识别馆',place:'植物馆',landmark:'greenhouse',short:'拍照后的候选识别'},
+ {id:'translation',name:'语言翻译馆',place:'语言小屋',landmark:'translation',short:'翻译工具帮助读懂文字'},
+ {id:'shopping',name:'购物推荐馆',place:'小镇商店',landmark:'recommendation',short:'浏览记录影响商品展示'},
+ {id:'sports',name:'运动数据馆',place:'运动角',landmark:'sports',short:'传感器读数变成运动提示'},
+ {id:'art',name:'图像艺术馆',place:'画室',landmark:'art',short:'像素规则生成画面效果'},
+ {id:'medical',name:'影像辅助馆',place:'健康角',landmark:'medical',short:'影像标记辅助专业复核'}
 ];
+const introductions={
+ recognition:{npc:'植物馆馆长',line:'游客拍到一片叶子，却不知道它叫什么。识别工具怎样给出候选？',input:'叶片照片里的形状、颜色等特征',process:'将特征与已知植物资料比较',output:'列出可能的名称，再由人核对',focus:'算法把图像中的线索变成可以比较的信息。'},
+ translation:{npc:'语言小屋翻译员',line:'一位游客看不懂指路牌，想知道“花园在哪里？”怎样用英语说。',input:'需要翻译的文字或语音',process:'分析词语与表达顺序，转换语言',output:'给出译文，再核对语境',focus:'本馆只演示固定短句的词块转换。'},
+ shopping:{npc:'小镇商店老板',line:'商店里商品很多，怎样让游客先看到可能感兴趣的东西？',input:'浏览、购买或评价等记录',process:'比较兴趣线索，给商品排序',output:'生成推荐清单，由人决定是否需要',focus:'排在前面只是一种建议，不代表今天一定想买。'},
+ sports:{npc:'运动教练',line:'手表记录了连续变化的运动读数，它怎样数出一次次运动？',input:'设备传感器连续采集的读数',process:'按规则寻找达到阈值的峰值',output:'得到运动次数等提示',focus:'本馆使用固定的模拟读数，不是实际计步器。'},
+ art:{npc:'画室主人',line:'同一张小镇照片，为什么点一下就能变成不同的画面效果？',input:'图片里每个像素的颜色',process:'按选定规则逐个改变像素值',output:'生成新画面，创作选择仍由你决定',focus:'这个馆的体验会在浏览器中实际处理像素。'},
+ medical:{npc:'影像辅助员',line:'一张影像信息很多，算法怎样先圈出值得专业人员复核的位置？',input:'影像数据；本馆用虚构亮度格代替',process:'按设定条件标记满足条件的区域',output:'给出复核提示，诊断由专业人员完成',focus:'亮点不等于病变，本馆不能用于医疗判断。'}
+};
 const leaves=[
  {id:'ginkgo',name:'银杏',shape:'fan',color:'yellow'},
  {id:'maple',name:'枫叶',shape:'palm',color:'red'},
@@ -73,6 +81,6 @@ function applyArtStyle(pixels,style){
  }
  return out;
 }
-const galleryModelApi={halls,leaves,phrases,products,readings,imageValues,runDemo,applyArtStyle};
+const galleryModelApi={halls,introductions,leaves,phrases,products,readings,imageValues,runDemo,applyArtStyle};
 if(typeof module!=='undefined'&&module.exports)module.exports=galleryModelApi;
 if(typeof window!=='undefined')window.GalleryModel=galleryModelApi;

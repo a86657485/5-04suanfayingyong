@@ -3,6 +3,20 @@
  const M=window.GalleryModel;
  const escape=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const pick=(value,expected)=>value===expected?'selected':'';
+ function storyScene(hall){
+  if(hall==='recognition')return `<div class="scene-leaf"><img src="/assets/leaf-ginkgo.webp" alt="" aria-hidden="true"><span class="scene-scan"></span></div><div class="scene-clues"><span>形状 · 扇形</span><span>颜色 · 黄色</span><strong>候选：待核对</strong></div>`;
+  if(hall==='translation')return `<div class="scene-sign"><span>花园在哪里？</span><span class="scene-convert" aria-hidden="true">→</span><strong>Where is the garden?</strong></div>`;
+  if(hall==='shopping')return `<div class="scene-products"><span>科学实验盒<small>浏览 3 次</small></span><span>跳绳<small>浏览 1 次</small></span><span>水彩笔<small>浏览 0 次</small></span></div><div class="scene-result-tag">先展示相关商品</div>`;
+  if(hall==='sports')return `<div class="scene-sensor"><div class="scene-sensor-bars">${M.readings.map((value,i)=>`<i class="${value>=6?'peak':''}" style="height:${value*10}%" title="第${i+1}次读数：${value}"></i>`).join('')}</div><span>读数 → 找峰值 → 计次数</span></div>`;
+  if(hall==='art')return `<div class="scene-art"><figure><img src="/assets/game-map-paths.webp" alt="" aria-hidden="true"><figcaption>原图</figcaption></figure><figure><img src="/assets/game-map-paths.webp" alt="" aria-hidden="true"><figcaption>像素处理预览</figcaption></figure></div>`;
+  return `<div class="scene-scan-grid">${M.imageValues.map(value=>`<i class="${value>=8?'marked':''}" style="--shade:${value*25}"></i>`).join('')}</div><span class="scene-medical-note">算法先标记 · 专业人员再复核</span>`;
+ }
+ function renderIntro(hall){
+  const info=M.introductions[hall],place=M.halls.find(x=>x.id===hall);
+  if(!info||!place)return '';
+  const mark={recognition:'叶',translation:'译',shopping:'购',sports:'动',art:'艺',medical:'影'}[hall];
+  return `<div class="gallery-topline"><button class="text-button" type="button" data-hall="hub">← 返回体验馆一览</button><span>先了解应用 · 再亲手体验</span></div><section class="gallery-story" aria-label="${escape(place.name)}介绍"><div class="story-dialogue"><span class="story-npc-mark" aria-hidden="true">${mark}</span><div><strong>${escape(info.npc)}说</strong><p>“${escape(info.line)}”</p></div></div><div class="gallery-scene gallery-scene-${hall}" role="img" aria-label="${escape(info.input)}，${escape(info.process)}，${escape(info.output)}">${storyScene(hall)}</div><div class="story-flow"><div><span>输入什么</span><p>${escape(info.input)}</p></div><div><span>算法怎样处理</span><p>${escape(info.process)}</p></div><div><span>得到什么</span><p>${escape(info.output)}</p></div></div><p class="story-focus"><strong>留意算法的作用：</strong>${escape(info.focus)}</p><button class="primary-button full story-enter" type="button" data-action="gallery-enter">看完介绍，开始体验 →</button></section>`;
+ }
  function renderHall(hall,records){
   const latest=records?.at(-1),lastInput=latest?.input||{},out=latest?.output;
   let form='';
@@ -13,7 +27,7 @@
   if(hall==='art')form=`<p class="dialogue-bubble">画室主人：同一张小镇图片，能用怎样的步骤做出不同效果？</p><label for="hall-style">选择图像处理效果</label><select id="hall-style"><option value="grayscale" ${pick(lastInput.style||'grayscale','grayscale')}>灰度：把RGB变成同一亮度</option><option value="posterize" ${pick(lastInput.style,'posterize')}>色阶：把颜色归并成少数等级</option><option value="invert" ${pick(lastInput.style,'invert')}>反色：用255减去原颜色</option></select><div class="art-canvases"><figure><canvas id="art-source" width="240" height="140"></canvas><figcaption>原图</figcaption></figure><figure><canvas id="art-result" width="240" height="140"></canvas><figcaption>运行后的图</figcaption></figure></div><p class="small-note">点击运行后，浏览器会逐个改变图片像素，结果不是预先放好的另一张图。</p>`;
   if(hall==='medical')form=`<p class="dialogue-bubble">影像辅助员：我先把较亮的区域标记出来，再交给医生复核。</p><div class="medical-grid">${M.imageValues.map((value,index)=>`<span class="medical-cell ${out?.flagged.includes(index)?'flagged':''}" style="background:rgb(${value*25},${value*25},${value*25})" title="格子${index+1}：亮度${value}"></span>`).join('')}</div><label for="hall-threshold">标记亮点的阈值 <output id="value-threshold">${lastInput.threshold||7}</output></label><input class="gallery-range" type="range" min="4" max="9" value="${lastInput.threshold||7}" id="hall-threshold" data-output="value-threshold"><p class="small-note">虚构影像中的亮点检测教学模拟。标记不等于疾病判断，诊断须由专业人员完成。</p>`;
   const label={recognition:'比较特征',translation:'运行词块翻译',shopping:'重新生成推荐',sports:'分析运动读数',art:'处理图片像素',medical:'标记模拟亮点'}[hall];
-  return `<div class="gallery-topline"><button class="text-button" type="button" data-hall="hub">← 返回体验馆一览</button><span>自由体验 · 不影响主线进度</span></div><form id="gallery-form" class="gallery-form" data-hall-id="${hall}">${form}<button class="primary-button full" type="submit">${label}</button></form>${out?`<div class="gallery-result"><strong>本次运行结果</strong>${resultHtml(hall,out)}<p class="small-note">${escape(out.explanation)}</p></div>`:''}`;
+  return `<div class="gallery-topline"><button class="text-button" type="button" data-hall="hub">← 返回体验馆一览</button><button class="text-button" type="button" data-action="gallery-intro">再看应用介绍</button></div><form id="gallery-form" class="gallery-form" data-hall-id="${hall}">${form}<button class="primary-button full" type="submit">${label}</button></form>${out?`<div class="gallery-result"><strong>本次运行结果</strong>${resultHtml(hall,out)}<p class="small-note">${escape(out.explanation)}</p><p class="story-takeaway"><strong>算法在这里的作用：</strong>${escape(M.introductions[hall].focus)}</p></div>`:''}`;
  }
  function resultHtml(hall,out){
   if(hall==='recognition')return `<ol>${out.candidates.map(x=>`<li>${escape(x.name)} · 匹配${x.score}项特征</li>`).join('')}</ol>`;
@@ -42,5 +56,5 @@
   img.src='/assets/game-map-paths.webp';
  }
  function afterRender(hall,latest){if(hall==='art')paintArt(latest?.output?.style);}
- window.GalleryUI={renderHall,readInput,afterRender};
+ window.GalleryUI={renderIntro,renderHall,readInput,afterRender};
 })();
