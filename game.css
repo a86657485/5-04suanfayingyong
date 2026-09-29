@@ -17,11 +17,20 @@
 .map-scene{cursor:crosshair}.hotspot{cursor:pointer}.walk-marker{position:absolute;z-index:4;width:24px;height:14px;border:3px solid #ffd06a;border-radius:50%;background:rgba(255,255,255,.35);box-shadow:0 0 0 2px #154f4e,0 2px 8px #183d42;transform:translate(-50%,-50%);pointer-events:none}
 .map-character.walking{animation:walk-hop .22s ease-in-out infinite alternate}
 @keyframes walk-hop{from{translate:0 0}to{translate:0 -2px}}
+.route-layer .modeled-road{fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.88}
+.route-layer .modeled-road.edge{stroke:#74563d;stroke-width:2.7}
+.route-layer .modeled-road.surface{stroke:#f5deb0;stroke-width:2.1}
+.route-layer .modeled-road.east.edge{stroke:#655178}
+.route-layer .modeled-road.east.surface{stroke:#e8d4ef}
+.route-layer .modeled-road.planks{stroke:#9e7b51;stroke-width:2.05;stroke-dasharray:.12 .55;opacity:.38}
+.route-layer .modeled-road.east.planks{stroke:#806596;stroke-dasharray:.2 .75}
+.gate-foreground{position:absolute;inset:0;z-index:5;pointer-events:none;background:url('/assets/game-map-paths.webp') center/100% 100% no-repeat;clip-path:polygon(43% 69%,47% 67%,52% 68%,57% 67%,61% 70%,64% 78%,60% 81%,42% 81%,40% 77%)}
+.barrier{left:47%;top:61%}
 /* Conversation and optional application halls */
 .scene-speech{position:absolute;z-index:6;left:3%;bottom:13%;width:36%;max-width:280px;padding:9px 11px;border:2px solid var(--deep);border-radius:13px;background:rgba(255,252,237,.96);box-shadow:3px 4px 0 rgba(19,63,69,.6);font-size:11px;font-weight:800;line-height:1.5;pointer-events:none}
 .hall-hotspot{position:absolute;z-index:6;width:30px;height:30px;border:2px solid #264c69;border-radius:50%;background:#f6e8ff;color:#493b74;font-weight:900;font-size:13px;box-shadow:0 2px 0 #264c69;cursor:pointer}
 .hall-hotspot:hover,.hall-hotspot.active{background:#e6c7ff;transform:translateY(-2px)}
-.recognition-hall{left:15%;top:19%}.translation-hall{right:7%;top:19%}.shopping-hall{right:19%;top:37%}.sports-hall{left:58%;top:24%}.art-hall{right:10%;top:60%}.medical-hall{right:27%;top:12%}
+.recognition-hall{left:18%;top:22%}.translation-hall{right:25%;top:26%}.shopping-hall{right:17%;top:52%}.sports-hall{left:59%;top:29%}.art-hall{right:17%;top:67%}.medical-hall{right:27%;top:35%}
 .dialogue-card{border:2px solid #e6b965;border-radius:17px;background:#fffaf0;padding:17px;box-shadow:4px 5px 0 #d8e4d6}
 .dialogue-person{display:flex;align-items:center;gap:11px;font-weight:900;color:#7d4938}.dialogue-person img{width:49px;height:55px;object-fit:contain}
 .dialogue-bubble{position:relative;background:#fff0c8;border-radius:12px;padding:14px;line-height:1.7;font-weight:800;margin:12px 0}

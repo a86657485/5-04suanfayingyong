@@ -44,8 +44,22 @@ test('named routes have distinct road traces and blocked B ends before the barri
  assert.deepEqual(C.at(-1),walk.landmarks.plaza);
  assert.notDeepEqual(blocked.at(-1),walk.landmarks.plaza);
  assert.ok(blocked.at(-1).y>walk.landmarks.plaza.y);
- assert.equal(B.filter(p=>p.y>=29&&p.y<=39).every(p=>p.x<=47),true,'中心路应绕开花坛左侧');
+ assert.equal(B.filter(p=>p.y>=27&&p.y<=33).every(p=>p.x<50),true,'中心路应绕开花坛左侧');
  assert.equal(blocked.at(-1).x,walk.landmarks.barrier.x);
+});
+
+test('each named route stays on its collision map, including the closed-road ending',()=>{
+ for(const [id,closed] of [['A',false],['B',false],['C',false],['B',true]]){
+  const grid=walk.makeGrid(closed),route=walk.namedRoute(id,closed);
+  for(const p of route)assert.equal(grid[p.y][p.x],0,`${id} crosses scenery at ${p.x},${p.y}`);
+  for(let i=1;i<route.length;i++){
+   const a=route[i-1],b=route[i];
+   if(a.x!==b.x&&a.y!==b.y){
+    assert.equal(grid[a.y][b.x],0,`${id} cuts a blocked corner`);
+    assert.equal(grid[b.y][a.x],0,`${id} cuts a blocked corner`);
+   }
+  }
+ }
 });
 
 test('every optional experience hall has a reachable doorway',()=>{
@@ -60,4 +74,16 @@ test('tapping a hall again while already at its doorway still completes arrival'
  const door=walk.landmarks.sports;
  const path=pathFrom(door,door);
  assert.deepEqual(path,[door]);
+});
+
+test('the walkable map excludes visible buildings, water, planter and stage',()=>{
+ const grid=walk.makeGrid(false);
+ for(const [place,{x,y}] of Object.entries({
+  searchBooth:{x:33,y:26},eastBuilding:{x:82,y:25},
+  centralPlanter:{x:52,y:28},westWater:{x:23,y:33},stageRoof:{x:52,y:7}
+ }))assert.equal(grid[y][x],1,`${place} (${x},${y}) should block walking`);
+});
+
+test('a click inside the east building is rejected instead of snapping onto a nearby path',()=>{
+ assert.equal(pathFrom(walk.landmarks.entrance,{x:82,y:25}),null);
 });
