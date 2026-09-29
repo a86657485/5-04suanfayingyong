@@ -31,3 +31,23 @@ test('a demo result points back to the algorithm’s real-life role',()=>{
  assert.match(html,/算法在这里的作用/);
  assert.ok(html.includes(model.introductions.recognition.focus));
 });
+
+test('hall practice asks one compact decision after the introduction',()=>{
+ const context={window:{GalleryModel:model}};
+ vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../gallery-ui.js'),'utf8'),context);
+  const recognition=context.window.GalleryUI.renderHall('recognition',[]);
+  assert.match(recognition,/id="hall-features"/);
+  assert.doesNotMatch(recognition,/id="hall-shape"|id="hall-color"/);
+ const shopping=context.window.GalleryUI.renderHall('shopping',[]);
+ assert.match(shopping,/id="hall-history"/);
+ assert.doesNotMatch(shopping,/id="hall-science"|id="hall-sport"|id="hall-art"/);
+  for(const hall of model.halls){
+  const html=context.window.GalleryUI.renderHall(hall.id,[]);
+  assert.doesNotMatch(html,/class="dialogue-bubble"/);
+  assert.match(html,/id="gallery-form"/);
+  const input={recognition:{sample:'ginkgo',shape:'fan',color:'yellow'},translation:{phrase:'garden'},shopping:{science:5,sport:1,art:0},sports:{threshold:5},art:{style:'grayscale'},medical:{threshold:7}}[hall.id];
+  const withResult=context.window.GalleryUI.renderHall(hall.id,[{input,output:model.runDemo(hall.id,input)}]);
+  assert.match(withResult,/class="gallery-more"/);
+  assert.match(withResult,/算法在这里的作用/);
+ }
+});

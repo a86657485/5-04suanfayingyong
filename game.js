@@ -83,7 +83,9 @@ function render(){
  const stage=viewStage;
  const hallId=galleryView?stage.slice(5):null;
  const hall=hallId==='hub'?null:window.GalleryModel.halls.find(x=>x.id===hallId);
- document.querySelector('.mission-column').classList.toggle('hall-story-mode',galleryView&&hallIntroMode&&hallId!=='hub');
+ const missionColumn=document.querySelector('.mission-column');
+ missionColumn.classList.toggle('hall-story-mode',galleryView&&hallIntroMode&&hallId!=='hub');
+ missionColumn.classList.toggle('hall-experience-mode',galleryView&&!hallIntroMode&&hallId!=='hub');
  $('student-name').textContent=`${student.classId}班 · ${student.name}`;
  $('points-pill').textContent=`印章积分 ${activityPoints}`;
  $('map-title').textContent=galleryView?(hall?.name||'自由探索体验馆'):titles[stage];
@@ -119,7 +121,7 @@ function renderGallery(hallId){
   $('feedback').classList.remove('warn');
   return;
  }
- $('mission-intro').textContent=`${hall.place} · ${hall.short}。每次只改一个条件，更容易看清结果为什么变化。`;
+ $('mission-intro').textContent=`${hall.place} · 选一个条件，看算法怎样帮忙。`;
  $('mission-content').innerHTML=window.GalleryUI.renderHall(hallId,records);
  if(!records.length){$('feedback').textContent='选一个条件运行，再观察算法的输出。';$('feedback').classList.remove('warn');}
  window.GalleryUI.afterRender(hallId,records.at(-1));
