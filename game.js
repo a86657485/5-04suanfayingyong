@@ -106,6 +106,7 @@ function render(){
  if(viewKey!==lastRenderedKey)$('mission-content').scrollTop=0;
  if(viewKey!==lastRenderedKey&&!galleryView&&scene&&!scene.done)$('feedback').textContent=`${scene.npc}在等你回应。先听他的需要，再决定下一步。`;
  lastRenderedKey=viewKey;
+ window.PageGuide?.enter(stage);
 }
 function renderGallery(hallId){
  if(hallId==='hub'){

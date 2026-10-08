@@ -56,6 +56,7 @@ function createApp(options={}){
   return {classId,at:Date.now(),students};
  }
  const allowedFiles=new Map([
+  ['/page-guide.js','page-guide.js'],['/page-guide.css','page-guide.css'],
   ['/','login.html'],['/login.js','login.js'],['/game','game.html'],['/game.js','game.js'],['/gallery-model.cjs','gallery-model.cjs'],['/gallery-ui.js','gallery-ui.js'],['/game-rules.cjs','game-rules.cjs'],['/walk-map.cjs','walk-map.cjs'],['/walk.js','walk.js'],['/vendor/easystar.js','vendor/easystarjs/easystar-0.4.4.min.js'],['/game.css','game.css'],['/teacher','teacher.html'],['/teacher.js','teacher.js'],['/quiz','quiz.html'],['/quiz.js','quiz.js'],['/demo','demo.html'],['/demo.js','demo.js']
  ]);
  const server=http.createServer(async(req,res)=>{

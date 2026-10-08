@@ -36,6 +36,26 @@ test('teacher test mode serves its script from the local classroom service',asyn
  }finally{await f.close();}
 });
 
+test('every classroom page loads its operation guide and both guide assets are served',async()=>{
+ const f=await fixture();
+ try{
+  const login=await post(f.base,'/api/login',{classId:'501',id:'501-a'});
+  for(const page of ['/','/game','/quiz','/teacher','/demo']){
+   const response=await fetch(f.base+page,{headers:{cookie:login.cookie}});
+   assert.equal(response.status,200);
+   assert.equal(new URL(response.url).pathname,page);
+   const html=await response.text();
+   assert.match(html,/src="\/page-guide\.js"/,`${page} must load the operation guide`);
+   assert.match(html,/href="\/page-guide\.css"/,`${page} must load the guide layout`);
+  }
+  for(const [asset,type] of [['/page-guide.js','text/javascript'],['/page-guide.css','text/css']]){
+   const response=await fetch(f.base+asset);
+   assert.equal(response.status,200,`${asset} must be reachable from student computers`);
+   assert.ok(response.headers.get('content-type').includes(type));
+  }
+ }finally{await f.close();}
+});
+
 test('startup address list prefers classroom private-network ranges',()=>{
  assert.equal(isPrivateLanAddress('192.168.0.14'),true);
  assert.equal(isPrivateLanAddress('10.2.4.5'),true);
