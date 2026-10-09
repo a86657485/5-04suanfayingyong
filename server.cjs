@@ -56,6 +56,7 @@ function createApp(options={}){
   return {classId,at:Date.now(),students};
  }
  const allowedFiles=new Map([
+  ['/teacher-analytics.cjs','teacher-analytics.cjs'],['/teacher-charts.js','teacher-charts.js'],['/teacher-charts.css','teacher-charts.css'],['/teacher.css','teacher.css'],
   ['/gallery-principles.cjs','gallery-principles.cjs'],
   ...['recognition','translation','shopping','sports','art','medical'].map(id=>[`/assets/principles/${id}.svg`,`assets/principles/${id}.svg`]),
   ['/page-guide.js','page-guide.js'],['/page-guide.css','page-guide.css'],
@@ -71,7 +72,7 @@ function createApp(options={}){
     if(req.headers.origin&&req.headers.origin!==`http://${req.headers.host}`&&req.headers.origin!==`https://${req.headers.host}`)return json(res,403,{error:'来源不允许'});
     if(!req.headers['content-type']?.startsWith('application/json'))return json(res,415,{error:'需要JSON格式'});
    }
-   if(p.startsWith('/api/teacher/')||p==='/teacher'||p==='/demo'||p==='/teacher.js'||p==='/demo.js'){
+   if(p.startsWith('/api/teacher/')||['/teacher','/demo','/teacher.js','/demo.js','/teacher-analytics.cjs','/teacher-charts.js','/teacher-charts.css','/teacher.css'].includes(p)){
     if(!isTeacherAddress(req.socket.remoteAddress))return json(res,403,{error:'教师页面仅可在教师电脑本机打开'});
    }
    if(p==='/api/classes'&&req.method==='GET')return json(res,200,{classes:classIds});

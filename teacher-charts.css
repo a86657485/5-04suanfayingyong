@@ -1,0 +1,59 @@
+.teacher-page .teacher-chart-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;color:#123f45}
+.teacher-page .teacher-chart-card{min-width:0;background:#fffdf5;border:1.5px solid #b9cbbf;border-radius:15px;padding:11px 13px 8px;display:flex;flex-direction:column;overflow:hidden}
+.teacher-page .teacher-chart-heading{margin-bottom:6px}
+.teacher-page .teacher-chart-heading h2{margin:0;font-size:17px;line-height:1.25;font-weight:850;color:#123f45}
+.teacher-page .teacher-chart-heading p{margin:3px 0 0;font-size:11px;line-height:1.3;color:#476565}
+.teacher-page .teacher-chart-note{margin:auto 0 0;padding-top:6px;font-size:11px;line-height:1.25;color:#476565}
+.teacher-page .teacher-chart-status,.teacher-page .teacher-chart-stages,.teacher-page .teacher-chart-halls{min-height:218px}
+.teacher-page .teacher-chart-status-body{display:flex;align-items:center;justify-content:space-between;gap:9px;min-height:118px}
+.teacher-page .teacher-chart-ring{width:120px;max-width:49%;flex:0 0 auto;overflow:visible}
+.teacher-page .teacher-chart-ring-value{fill:#123f45;font-family:inherit;font-size:21px;font-weight:900}
+.teacher-page .teacher-chart-ring-total{font-size:13px;font-weight:650}
+.teacher-page .teacher-chart-ring-label{fill:#476565;font-family:inherit;font-size:10px}
+.teacher-page .teacher-chart-status-list{list-style:none;margin:0;padding:0;flex:1;min-width:0}
+.teacher-page .teacher-chart-status-list li{display:grid;grid-template-columns:9px 1fr auto;align-items:center;gap:7px;padding:7px 0;font-size:12px;border-bottom:1px solid #e7ece0}
+.teacher-page .teacher-chart-status-list li:last-child{border-bottom:0}
+.teacher-page .teacher-chart-status-list strong{font-size:20px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.teacher-page .teacher-chart-status-list small{font-size:11px;font-weight:550;margin-left:3px}
+.teacher-page .teacher-chart-dot{width:9px;height:9px;border-radius:50%}
+.teacher-page .teacher-chart-bars{list-style:none;display:grid;gap:10px;padding:8px 0;margin:0}
+.teacher-page .teacher-chart-bars li{display:grid;grid-template-columns:minmax(68px,1fr) minmax(40px,1.2fr) auto;gap:9px;align-items:center;font-size:12px;line-height:1.15;min-width:0}
+.teacher-page .teacher-chart-bar-label{line-height:1.25;font-weight:650}
+.teacher-page .teacher-chart-track{height:11px;background:#e4eee5;border-radius:6px;overflow:hidden;display:block}
+.teacher-page .teacher-chart-fill{display:block;height:100%;background:#2C827A;border-radius:6px}
+.teacher-page .teacher-chart-bar-count{font-size:13px;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.teacher-page .teacher-chart-bar-count small{font-size:11px;font-weight:550;color:#476565}
+.teacher-page .teacher-chart-halls .teacher-chart-bars{gap:7px;padding:2px 0}
+.teacher-page .teacher-chart-halls .teacher-chart-bars li{grid-template-columns:78px minmax(35px,1fr) auto;font-size:12px}
+.teacher-page .teacher-chart-halls .teacher-chart-bar-count small{display:none}
+.teacher-page .teacher-chart-exit{grid-column:span 2;min-height:231px}
+.teacher-page .teacher-chart-comparison-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;margin-top:1px}
+.teacher-page .teacher-chart-comparison-table th{font-weight:700;text-align:left;line-height:1.25}
+.teacher-page .teacher-chart-comparison-table thead th{padding:0 5px 5px;font-size:11px;color:#476565}
+.teacher-page .teacher-chart-comparison-table th:first-child{width:27%;padding-left:0}
+.teacher-page .teacher-chart-comparison-table tbody th,.teacher-page .teacher-chart-comparison-table tbody td{padding:2px 5px;border-top:1px solid #e7ece0;vertical-align:middle}
+.teacher-page .teacher-chart-evidence small{display:block;font-size:11px;line-height:1.2;color:#476565;margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.teacher-page .teacher-chart-comparison-meter{height:16px;position:relative;background:#edf0e7;border-radius:4px;overflow:hidden}
+.teacher-page .teacher-chart-comparison-fill{position:absolute;left:0;top:0;height:100%;background:#f0d493;opacity:.8}
+.teacher-page .teacher-chart-evidence.latest .teacher-chart-comparison-fill{background:#a0cfc3}
+.teacher-page .teacher-chart-comparison-meter strong{position:relative;z-index:1;display:block;line-height:16px;font-size:12px;padding-left:6px;color:#123f45;font-variant-numeric:tabular-nums}
+.teacher-page .teacher-chart-key{display:inline-block;width:10px;height:8px;background:#DCAD58;border-radius:2px;margin-right:5px}
+.teacher-page .teacher-chart-key.latest{background:#2C827A}
+.teacher-page .teacher-chart-quiz{min-height:231px}
+.teacher-page .teacher-chart-quiz-summary{display:flex;align-items:baseline;gap:8px;margin:0 0 5px;min-height:30px}
+.teacher-page .teacher-chart-quiz-summary strong{font-size:27px;font-weight:900;line-height:1;color:#2C827A;font-variant-numeric:tabular-nums}
+.teacher-page .teacher-chart-quiz-summary strong.teacher-chart-empty{font-size:20px}
+.teacher-page .teacher-chart-quiz-summary small{font-size:11px;margin-left:3px}
+.teacher-page .teacher-chart-quiz-summary>span{font-size:11px;color:#476565}
+.teacher-page .teacher-chart-histogram{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.teacher-page .teacher-chart-histogram li{text-align:center;min-width:0}
+.teacher-page .teacher-chart-column{height:93px;position:relative;padding:23px 0 0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;border-bottom:1px solid #b9cbbf}
+.teacher-page .teacher-chart-column>span{width:69%;max-width:47px;background:#2C827A;border-radius:5px 5px 0 0;flex-shrink:0;max-height:70px;min-height:0}
+.teacher-page .teacher-chart-column>strong{font-size:15px;line-height:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.teacher-page .teacher-chart-column small{font-size:11px;margin-left:2px;font-weight:550}
+.teacher-page .teacher-chart-band-label{display:block;font-size:11px;line-height:1.3;margin-top:5px;white-space:nowrap;color:#476565}
+.teacher-page .teacher-chart-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:1120px){.teacher-page .teacher-chart-card{padding:12px 11px 9px}.teacher-page .teacher-chart-heading h2{font-size:16px}.teacher-page .teacher-chart-bars li{gap:6px;grid-template-columns:minmax(65px,1fr) minmax(30px,1fr) auto}.teacher-page .teacher-chart-bar-count small{display:none}.teacher-page .teacher-chart-halls .teacher-chart-bars li{grid-template-columns:72px minmax(30px,1fr) auto;font-size:11px}.teacher-page .teacher-chart-status-list li{gap:5px;font-size:11px}.teacher-page .teacher-chart-ring{width:118px}.teacher-page .teacher-chart-histogram{gap:6px}.teacher-page .teacher-chart-comparison-table th:first-child{width:26%}}
+@media(max-width:899px){.teacher-page .teacher-chart-board{grid-template-columns:repeat(2,minmax(0,1fr))}.teacher-page .teacher-chart-exit{grid-column:span 2}.teacher-page .teacher-chart-quiz{grid-column:span 1}.teacher-page .teacher-chart-comparison-table th:first-child{width:27%}}
+@media(max-width:599px){.teacher-page .teacher-chart-board{grid-template-columns:minmax(0,1fr)}.teacher-page .teacher-chart-exit,.teacher-page .teacher-chart-quiz{grid-column:auto}.teacher-page .teacher-chart-card{padding:13px}.teacher-page .teacher-chart-evidence small{white-space:normal;line-height:1.3}.teacher-page .teacher-chart-comparison-table th:first-child{width:28%}.teacher-page .teacher-chart-status-body{justify-content:flex-start}.teacher-page .teacher-chart-ring{width:133px}.teacher-page .teacher-chart-histogram{gap:12px}}
+@media(prefers-reduced-motion:reduce){.teacher-page .teacher-chart-board *{animation:none!important;transition:none!important}}
