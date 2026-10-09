@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="title desc">
+ <title id="title">固定短句翻译：词块转换并调整顺序</title>
+ <desc id="desc">固定短句花园在哪里，拆为花园、在哪里两个词块，转换为the garden、Where is后重排，组成Where is the garden?。本馆不能翻译任意句子。</desc>
+ <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8" fill="#436bb8"/></marker></defs>
+ <rect width="960" height="440" rx="22" fill="#f5f8ff"/>
+ <g font-family="sans-serif" font-size="24" fill="#233653">
+  <text x="28" y="40" font-size="28" font-weight="700">语言翻译：转换词块，还要调整顺序</text>
+  <text x="32" y="87" font-weight="700">① 输入：固定短句</text><text x="343" y="87" font-weight="700">② 处理：转换重排</text><text x="686" y="87" font-weight="700">③ 结果：组合译文</text>
+  <g id="input">
+   <rect x="28" y="115" width="255" height="250" rx="16" fill="#fff" stroke="#c7d4ed" stroke-width="2"/>
+   <path d="M60 150H253V242H116L91 266V242H60Z" fill="#edf3ff" stroke="#436bb8" stroke-width="2"/>
+   <text x="74" y="207">花园在哪里？</text>
+   <rect x="45" y="297" width="85" height="43" rx="9" fill="#ccebdd"/><text x="62" y="326">花园</text>
+   <rect x="140" y="297" width="125" height="43" rx="9" fill="#ffe5bb"/><text x="151" y="326">在哪里</text>
+  </g>
+  <path d="M293 238H329" stroke="#436bb8" stroke-width="4" marker-end="url(#arrow)"/>
+  <g id="process">
+   <rect x="342" y="115" width="282" height="250" rx="16" fill="#fff" stroke="#c7d4ed" stroke-width="2"/>
+   <rect x="354" y="145" width="122" height="47" rx="9" fill="#ccebdd"/><text x="387" y="177">花园</text>
+   <rect x="490" y="145" width="122" height="47" rx="9" fill="#ffe5bb"/><text x="503" y="177">在哪里</text>
+   <path d="M415 200C415 225 544 225 548 264" fill="none" stroke="#28805d" stroke-width="3" marker-end="url(#arrow)"/>
+   <path d="M550 200C550 240 415 228 415 264" fill="none" stroke="#c77b15" stroke-width="3" marker-end="url(#arrow)"/>
+   <rect x="354" y="275" width="120" height="48" rx="9" fill="#ffe5bb"/><text x="367" y="307" font-size="22">Where is</text>
+   <rect x="486" y="275" width="126" height="48" rx="9" fill="#ccebdd"/><text x="491" y="307" font-size="22">the garden</text>
+   <text x="407" y="351" font-size="22">目标语言顺序</text>
+  </g>
+  <path d="M633 238H669" stroke="#436bb8" stroke-width="4" marker-end="url(#arrow)"/>
+  <g id="output">
+   <rect x="683" y="115" width="249" height="250" rx="16" fill="#fff" stroke="#c7d4ed" stroke-width="2"/>
+   <path d="M702 151H912V272H871L851 292V272H702Z" fill="#edf3ff" stroke="#436bb8" stroke-width="2"/>
+   <text x="725" y="197" font-size="22">Where is</text><text x="725" y="234" font-size="22">the garden?</text>
+   <text x="710" y="331" font-size="22">读译文，再核对语境</text>
+  </g>
+  <text x="30" y="413" font-size="22">教学简化：只转换已有固定短句，不能翻译任意句子。</text>
+ </g>
+</svg>

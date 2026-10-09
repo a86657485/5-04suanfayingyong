@@ -18,10 +18,10 @@
 .page-guide-close:disabled{opacity:1;color:#5d7167;background:#e6e9df;border-color:#a4b8ac;box-shadow:none;cursor:wait}
 .page-guide-close:not(:disabled):hover{background:#126762}
 .page-guide-close:focus-visible,.page-guide-reopen:focus-visible{outline:3px solid #efac36;outline-offset:4px}
-.page-guide-reopen{position:fixed;left:14px;bottom:14px;z-index:40;padding:9px 13px;min-height:40px;border:2px solid #123f45;border-radius:12px;background:#fff9ea;color:#123f45;box-shadow:0 3px 0 #123f45;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.page-guide-reopen{position:fixed;right:14px;bottom:14px;z-index:40;padding:9px 13px;min-height:40px;border:2px solid #123f45;border-radius:12px;background:#fff9ea;color:#123f45;box-shadow:0 3px 0 #123f45;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
 .page-guide-reopen:hover{background:#f8e7b6}
 .page-guide-reopen[hidden]{display:none}
 @keyframes page-guide-arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-height:740px){.page-guide-card{padding:20px 25px}.page-guide-header{padding-bottom:14px}.page-guide-background{margin:14px 0;padding:10px 13px}.page-guide-steps ol{gap:10px;margin-bottom:14px}.page-guide-footer{padding-top:13px}}
-@media(max-width:600px){.page-guide-card{padding:18px}.page-guide-title{font-size:21px}.page-guide-header{gap:11px}.page-guide-mark{width:38px;height:38px;font-size:23px}.page-guide-background p,.page-guide-steps li{font-size:15px}.page-guide-footer{gap:10px;flex-wrap:wrap}.page-guide-close{margin-left:auto}.page-guide-reopen{left:10px;bottom:10px;font-size:12px;min-height:36px}}
+@media(max-width:600px){.page-guide-card{padding:18px}.page-guide-title{font-size:21px}.page-guide-header{gap:11px}.page-guide-mark{width:38px;height:38px;font-size:23px}.page-guide-background p,.page-guide-steps li{font-size:15px}.page-guide-footer{gap:10px;flex-wrap:wrap}.page-guide-close{margin-left:auto}.page-guide-reopen{right:10px;bottom:10px;font-size:12px;min-height:36px}}
 @media(prefers-reduced-motion:reduce){.page-guide-card{animation:none}.page-guide-dialog::backdrop{backdrop-filter:none}}

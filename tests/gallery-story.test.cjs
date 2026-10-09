@@ -7,18 +7,21 @@ const vm=require('node:vm');
 const model=require('../gallery-model.cjs');
 
 test('each application hall introduces its real-life use before the existing demo',()=>{
- const context={window:{GalleryModel:model}};
+ const principlesPath=path.join(__dirname,'../gallery-principles.cjs');
+ const principles=fs.existsSync(principlesPath)?require(principlesPath):{};
+ const context={window:{GalleryModel:model,GalleryPrinciples:principles}};
  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../gallery-ui.js'),'utf8'),context);
  for(const hall of model.halls){
   const story=model.introductions[hall.id];
   assert.ok(story?.npc&&story.line&&story.input&&story.process&&story.output,`${hall.name} needs a complete introduction`);
   const html=context.window.GalleryUI.renderIntro(hall.id);
-  for(const part of [story.npc,story.line,story.input,story.process,story.output])assert.ok(html.includes(part),`${hall.name} is missing ${part}`);
-  assert.match(html,/class="gallery-scene/);
+  for(const part of [story.npc,story.line])assert.ok(html.includes(part),`${hall.name} is missing ${part}`);
+  assert.ok(html.includes(`/assets/principles/${hall.id}.svg`),`${hall.name} needs its science diagram before practice`);
+  assert.match(html,/想一想/);
   assert.match(html,/data-action="gallery-enter"/);
   assert.doesNotMatch(html,/id="gallery-form"/);
   if(hall.id==='recognition')assert.doesNotMatch(html,/银杏|枫叶|松针/,'the introduction must not reveal the leaf demo answer');
-  assert.match(context.window.GalleryUI.renderHall(hall.id,[]),/data-action="gallery-intro"/);
+  assert.match(context.window.GalleryUI.renderHall(hall.id,[]),/重看原理图/);
  }
 });
 

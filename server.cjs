@@ -56,6 +56,8 @@ function createApp(options={}){
   return {classId,at:Date.now(),students};
  }
  const allowedFiles=new Map([
+  ['/gallery-principles.cjs','gallery-principles.cjs'],
+  ...['recognition','translation','shopping','sports','art','medical'].map(id=>[`/assets/principles/${id}.svg`,`assets/principles/${id}.svg`]),
   ['/page-guide.js','page-guide.js'],['/page-guide.css','page-guide.css'],
   ['/','login.html'],['/login.js','login.js'],['/game','game.html'],['/game.js','game.js'],['/gallery-model.cjs','gallery-model.cjs'],['/gallery-ui.js','gallery-ui.js'],['/game-rules.cjs','game-rules.cjs'],['/walk-map.cjs','walk-map.cjs'],['/walk.js','walk.js'],['/vendor/easystar.js','vendor/easystarjs/easystar-0.4.4.min.js'],['/game.css','game.css'],['/teacher','teacher.html'],['/teacher.js','teacher.js'],['/quiz','quiz.html'],['/quiz.js','quiz.js'],['/demo','demo.html'],['/demo.js','demo.js']
  ]);
@@ -180,7 +182,7 @@ function createApp(options={}){
    if(p.startsWith('/api/'))return json(res,404,{error:'接口不存在'});
    if(req.method!=='GET')return json(res,405,{error:'方法不允许'});
    let file=allowedFiles.get(p);
-   if(p.startsWith('/assets/')){
+   if(p.startsWith('/assets/')&&!file){
     const name=path.basename(p);if(name!==p.slice('/assets/'.length)||!['game-map.webp','game-map-paths.webp','guide.webp','guide-front-pass.webp','guide-back.webp','guide-side.webp','guide-side-pass.webp','guide-back-pass.webp','visitor.webp','service-booth.webp','leaf-ginkgo.webp','leaf-maple.webp','leaf-pine.webp','favicon.svg'].includes(name))return json(res,404,{error:'资源不存在'});
     file='assets/'+name;
    }

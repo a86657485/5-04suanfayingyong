@@ -51,6 +51,11 @@ const topics={
 const points={search:20,nav:20,reco:20,service:10};
 function initialState(){return {search:{guest:0,terms:[],results:[],attempts:[],reason:'',done:false},nav:{phase:0,attempts:[],reason:'',done:false},reco:{phase:0,prediction:null,attempts:[],reason:'',done:false},service:{card:null,done:false},gallery:{records:{}},dialogue:{done:{search:{},nav:{},reco:{}},history:[]},hints:{search:0,nav:0,reco:0,service:0},last:{kind:'welcome',text:'欢迎来到奇趣游园会。请先帮小芽找活动。'}};}
 function stageOf(state){if(!state.search.done)return 'search';if(!state.nav.done)return 'nav';if(!state.reco.done)return 'reco';if(!state.service.done)return 'service';return 'complete';}
+function galleryUnlocked(state){return Object.keys(points).every(id=>state[id]?.done===true);}
+function galleryProgress(state){
+ const visited=galleryRulesModel.halls.filter(hall=>Array.isArray(state.gallery?.records?.[hall.id])&&state.gallery.records[hall.id].length>0).map(hall=>hall.id);
+ return {visited,next:galleryRulesModel.halls.find(hall=>!visited.includes(hall.id))?.id??null,total:galleryRulesModel.halls.length};
+}
 function dialogueFor(state){
  if(!state.dialogue)return null;
  const stage=stageOf(state),phase=stage==='search'?state.search.guest:stage==='nav'?state.nav.phase:stage==='reco'?state.reco.phase:-1;
@@ -77,6 +82,7 @@ function step(current,action){
  const ok=(text,extra={})=>({state:{...s,last:{kind:'ok',text,...extra}},accepted:true});
  if(typeof type!=='string')return fail('操作格式不正确。');
  if(type==='gallery/run'){
+  if(!galleryUnlocked(s))return fail('请先完成找活动、带游客、懂你推荐和智慧服务四项主线任务，再进入体验馆。');
   const hall=galleryRulesModel.halls.find(x=>x.id===action.hall);
   if(!hall)return fail('这个体验馆不存在。');
   let output;
@@ -191,6 +197,6 @@ function step(current,action){
  }
  return fail('请先完成当前游客的委托。');
 }
-const api={activities,searchGuests,navMissions,recoMissions,topics,points,dialogueScenes,dialogueFor,initialState,stageOf,searchResults,routeChoices,recommendation,step};
+const api={activities,searchGuests,navMissions,recoMissions,topics,points,dialogueScenes,dialogueFor,initialState,stageOf,galleryUnlocked,galleryProgress,searchResults,routeChoices,recommendation,step};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 if(typeof window!=='undefined')window.GameRules=api;

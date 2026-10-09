@@ -1,7 +1,7 @@
 'use strict';
 const R=window.GameRules,$=id=>document.getElementById(id);
 let state=R.initialState(),stage='search',demoIntroMode=false;
-function enter(target){state=R.initialState();if(['nav','reco','service'].includes(target))state.search.done=true;if(['reco','service'].includes(target))state.nav.done=true;if(target==='service')state.reco.done=true;stage=target;demoIntroMode=target.startsWith('hall:');render();}
+function enter(target){state=R.initialState();if(['nav','reco','service'].includes(target))state.search.done=true;if(['reco','service'].includes(target))state.nav.done=true;if(target==='service')state.reco.done=true;if(target.startsWith('hall:'))for(const id of Object.keys(R.points))state[id].done=true;stage=target;demoIntroMode=target.startsWith('hall:');render();}
 function act(action){const out=R.step(state,action);state=out.state;render();}
 function render(){
  const s=state[stage];$('demo-stage').value=stage;$('demo-message').textContent=stage.startsWith('hall:')?`${window.GalleryModel.halls.find(h=>h.id===stage.slice(5)).name} · ${demoIntroMode?'先看应用介绍，再体验演示':'改变输入条件，观察结果'} · 本页不写入学生记录`:`${state.last.text} · 当前虚构完成：${Object.keys(R.points).filter(id=>state[id].done).join('、')||'尚无'}`;

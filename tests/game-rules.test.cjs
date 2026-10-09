@@ -1,7 +1,8 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {initialState,step,searchResults,routeChoices,recommendation,dialogueFor}=require('../game-rules.cjs');
+const {initialState,step,searchResults,routeChoices,recommendation,dialogueFor,galleryUnlocked,galleryProgress}=require('../game-rules.cjs');
+const {halls}=require('../gallery-model.cjs');
 
 function act(state,type,data={}){return step(state,{type,...data}).state;}
 
@@ -83,11 +84,53 @@ test('visitor dialogue records a wrong interpretation then reveals the relevant 
  assert.equal(scene.done,false);
 });
 
-test('optional hall demo records input and output without advancing the required route',()=>{
+test('gallery unlock requires every mainline task to be complete',()=>{
+ const state=initialState();
+ assert.equal(galleryUnlocked(state),false);
+ for(const id of ['search','nav','reco','service'])state[id].done=true;
+ assert.equal(galleryUnlocked(state),true);
+ for(const id of ['search','nav','reco','service']){
+  state[id].done=false;
+  assert.equal(galleryUnlocked(state),false,`${id} is required even if all other tasks are complete`);
+  state[id].done=true;
+ }
+ state.service.done='true';
+ assert.equal(galleryUnlocked(state),false);
+});
+
+test('gallery requests before mainline completion are rejected without recording a demo',()=>{
+ const state=initialState();
+ state.search.done=true;
+ const out=step(state,{type:'gallery/run',hall:'sports',input:{threshold:7}});
+ assert.equal(out.accepted,false);
+ assert.match(out.state.last.text,/先完成.*找活动.*带游客.*懂你推荐.*智慧服务/);
+ assert.deepEqual(out.state.gallery.records,{});
+ assert.deepEqual(state.gallery.records,{});
+ assert.equal(out.state.nav.done,false);
+});
+
+test('gallery progress counts only successful runs of known halls in hall order',()=>{
+ const state=initialState();
+ assert.deepEqual(galleryProgress(state),{visited:[],next:halls[0].id,total:halls.length});
+ state.gallery.records[halls[3].id]=[{output:{}},{output:{}}];
+ state.gallery.records[halls[1].id]=[{output:{}}];
+ state.gallery.records[halls[0].id]=[];
+ state.gallery.records[halls[2].id]={length:1};
+ state.gallery.records.unknown=[{output:{}}];
+ const before=structuredClone(state);
+ assert.deepEqual(galleryProgress(state),{visited:[halls[1].id,halls[3].id],next:halls[0].id,total:halls.length});
+ assert.deepEqual(state,before);
+ for(const hall of halls)state.gallery.records[hall.id]=[{output:{}}];
+ assert.deepEqual(galleryProgress(state),{visited:halls.map(hall=>hall.id),next:null,total:halls.length});
+});
+
+test('unlocked hall demo records input and output without changing mainline completion',()=>{
  let state=initialState();
- state=act(state,'gallery/run',{hall:'sports',input:{threshold:7}});
+ for(const id of ['search','nav','reco','service'])state[id].done=true;
+ const out=step(state,{type:'gallery/run',hall:'sports',input:{threshold:7}});
+ state=out.state;
+ assert.equal(out.accepted,true);
  assert.equal(state.gallery.records.sports.at(-1).output.count,2);
- assert.equal(state.search.done,false);
- assert.equal(state.nav.done,false);
+ for(const id of ['search','nav','reco','service'])assert.equal(state[id].done,true);
  assert.equal(state.gallery.records.sports.at(-1).input.threshold,7);
 });

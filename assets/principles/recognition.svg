@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="title desc">
+ <title id="title">图像识别：提取特征，比较资料，列出候选</title>
+ <desc id="desc">示意叶片不对应体验题。轮廓和颜色两项特征与资料比较，匹配2项、1项、0项的候选按顺序列出，仍需人核对。</desc>
+ <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8" fill="#256c7c"/></marker></defs>
+ <rect width="960" height="440" rx="22" fill="#f5fbf6"/>
+ <g font-family="sans-serif" font-size="24" fill="#173a38">
+  <text x="28" y="40" font-size="28" font-weight="700">图像识别：算法比较的是哪些线索？</text>
+  <text x="32" y="87" font-weight="700">① 输入：观察图像</text>
+  <text x="345" y="87" font-weight="700">② 处理：特征匹配</text>
+  <text x="680" y="87" font-weight="700">③ 结果：列出候选</text>
+  <g id="input">
+   <rect x="28" y="112" width="258" height="257" rx="16" fill="#fff" stroke="#bbd7c6" stroke-width="2"/>
+   <path d="M89 282 C68 207 110 156 220 148 C219 237 180 291 89 282Z" fill="#6ebd79" stroke="#286247" stroke-width="3"/>
+   <path d="M90 282 197 172 M125 245 117 205 M153 218 160 180 M125 245 167 248 M153 218 193 219" stroke="#286247" stroke-width="3" fill="none"/>
+   <path d="M85 298 101 270" stroke="#286247" stroke-width="5"/>
+   <text x="63" y="342" font-size="22">示意叶片：观察线索</text>
+  </g>
+  <path d="M295 235H329" stroke="#256c7c" stroke-width="4" marker-end="url(#arrow)"/>
+  <g id="process">
+   <rect x="342" y="112" width="281" height="257" rx="16" fill="#fff" stroke="#bbd7c6" stroke-width="2"/>
+   <path d="M375 204 C359 160 387 136 439 135 C437 182 417 210 375 204Z" fill="none" stroke="#286247" stroke-dasharray="5 4" stroke-width="3"/>
+   <text x="464" y="169">轮廓 A</text>
+   <circle cx="406" cy="251" r="21" fill="#6ebd79" stroke="#286247" stroke-width="2"/>
+   <text x="464" y="259">颜色：绿</text>
+   <path d="M379 289H586" stroke="#256c7c" stroke-width="3" marker-end="url(#arrow)"/>
+   <text x="369" y="330" font-size="22">逐项与已知资料比较</text>
+  </g>
+  <path d="M634 235H666" stroke="#256c7c" stroke-width="4" marker-end="url(#arrow)"/>
+  <g id="output">
+   <g class="candidate" data-matches="2"><rect x="677" y="112" width="255" height="67" rx="12" fill="#d8f0df"/><text x="694" y="155">候选 A　匹配 2 项</text></g>
+   <g class="candidate" data-matches="1"><rect x="677" y="190" width="255" height="67" rx="12" fill="#e9f3ec"/><text x="694" y="233">候选 B　匹配 1 项</text></g>
+   <g class="candidate" data-matches="0"><rect x="677" y="268" width="255" height="67" rx="12" fill="#f0f4f1"/><text x="694" y="311">候选 C　匹配 0 项</text></g>
+   <text x="696" y="366" font-size="22" fill="#185d42">→ 仍由人核对</text>
+  </g>
+  <text x="30" y="413" font-size="22">教学简化：人选特征，算法按匹配数排序；示意叶片不对应体验题。</text>
+ </g>
+</svg>

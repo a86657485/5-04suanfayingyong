@@ -81,9 +81,11 @@ test('student identity is isolated, wrong action has evidence, and repeated even
   assert.equal(complete.data.points,20);
   const duplicate=await send({type:'search/reason',reason:'匹配游客的需要并核对活动内容'},'finish-search');
   assert.equal(duplicate.data.points,20);
-  const optional=await send({type:'gallery/run',hall:'sports',input:{threshold:7}});
-  assert.equal(optional.data.points,20);
-  assert.equal(optional.data.state.gallery.records.sports[0].output.count,2);
+  const locked=await send({type:'gallery/run',hall:'sports',input:{threshold:7}});
+  assert.equal(locked.data.accepted,false);
+  assert.equal(locked.data.points,20);
+  assert.match(locked.data.state.last.text,/先完成/);
+  assert.deepEqual(locked.data.state.gallery.records,{});
   const other=await fetch(f.base+'/api/state',{headers:{cookie:second.cookie}}).then(x=>x.json());
   assert.equal(other.points,0);
   assert.equal(other.state.search.attempts.length,0);
@@ -91,6 +93,40 @@ test('student identity is isolated, wrong action has evidence, and repeated even
   assert.equal(unauth.status,200); // local teacher computer may read its own classroom screen
   const teacher=await unauth.json();
   assert.equal(teacher.students.find(x=>x.student.id==='501-a').points,20);
+ }finally{await f.close();}
+});
+
+test('completed mainline unlocks gallery without requiring quiz or awarding extra points',async()=>{
+ const f=await fixture();
+ try{
+  const login=await post(f.base,'/api/login',{classId:'501',id:'501-a'});
+  let n=0;
+  const send=action=>post(f.base,'/api/action',{eventId:`unlock-${++n}`,action},login.cookie);
+  const blocked=await send({type:'gallery/run',hall:'sports',input:{threshold:7}});
+  assert.equal(blocked.data.accepted,false);
+  const storedBlocked=await fetch(f.base+'/api/state',{headers:{cookie:login.cookie}}).then(x=>x.json());
+  assert.deepEqual(storedBlocked.state.gallery.records,{});
+  for(const [terms,id] of [[['植物','识别'],'A'],[['植物','手工'],'B']]){
+   await send({type:'search/query',terms});
+   await send({type:'search/invite',id});
+  }
+  await send({type:'search/reason',reason:'匹配游客的需要并核对活动内容'});
+  for(const route of ['B','A','C','C'])await send({type:'nav/choose',route});
+  await send({type:'nav/reason',reason:'道路通行和预计用时改变，要按游客目标重选'});
+  for(const [prediction,id] of [['S','S'],['U','U'],['U','U'],['T','S']]){
+   await send({type:'reco/predict',id:prediction});
+   await send({type:'reco/invite',id});
+  }
+  await send({type:'reco/reason',reason:'历史记录提供建议，当前需要仍要由人判断'});
+  const card=await send({type:'service/submit',topic:'plant',input:'植物照片',action:'比对图像特征',benefit:'查找可能的植物名称'});
+  assert.equal(card.data.points,70);
+  const demo=await send({type:'gallery/run',hall:'sports',input:{threshold:7}});
+  assert.equal(demo.data.accepted,true);
+  assert.equal(demo.data.points,70);
+  assert.equal(demo.data.state.gallery.records.sports[0].output.count,2);
+  const storedDemo=await fetch(f.base+'/api/state',{headers:{cookie:login.cookie}}).then(x=>x.json());
+  assert.equal(storedDemo.state.gallery.records.sports.length,1);
+  assert.equal(storedDemo.points,70);
  }finally{await f.close();}
 });
 

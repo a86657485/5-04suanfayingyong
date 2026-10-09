@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="title desc">
+ <title id="title">运动读数：同时比较前后读数与阈值</title>
+ <desc id="desc">模拟读数1、2、6、2、7、1、5、1、8、1、4、1。阈值6，6、7、8三个点高于前后且达到阈值，计数3次；5和4虽是峰但不计入。</desc>
+ <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8" fill="#286d91"/></marker></defs>
+ <rect width="960" height="440" rx="22" fill="#f4faff"/>
+ <g font-family="sans-serif" font-size="24" fill="#23475c">
+  <text x="28" y="40" font-size="28" font-weight="700">运动数据：什么样的“峰”才计入一次？</text>
+  <text x="31" y="87" font-weight="700">① 输入：连续读数</text><text x="345" y="87" font-weight="700">② 处理：检查两个条件</text><text x="725" y="87" font-weight="700">③ 结果：计数</text>
+  <g id="input"><rect x="28" y="110" width="642" height="264" rx="16" fill="#fff" stroke="#bfd6e5" stroke-width="2"/></g>
+  <g id="process">
+   <g id="sensor-plot" data-values="1,2,6,2,7,1,5,1,8,1,4,1" data-threshold="6" data-y-zero="332" data-y-step="25">
+    <path d="M70 121V332H617" fill="none" stroke="#6c8a9e" stroke-width="2"/>
+    <line id="threshold-line" x1="70" y1="182" x2="616" y2="182" stroke="#c77919" stroke-width="3" stroke-dasharray="9 6"/>
+    <text x="454" y="171" font-size="22" fill="#9e5b0d">阈值 = 6</text>
+    <text x="40" y="340" font-size="22">0</text><text x="40" y="190" font-size="22">6</text><text x="40" y="140" font-size="22">8</text>
+    <polyline id="reading-line" points="70,307 116,282 162,182 208,282 254,157 300,307 346,207 392,307 438,132 484,307 530,232 576,307" fill="none" stroke="#286d91" stroke-width="4" stroke-linejoin="round"/>
+    <circle class="peak" data-index="2" cx="162" cy="182" r="10" fill="#de912a" stroke="#fff" stroke-width="3"/><text x="156" y="160" font-size="22">6</text>
+    <circle class="peak" data-index="4" cx="254" cy="157" r="10" fill="#de912a" stroke="#fff" stroke-width="3"/><text x="248" y="134" font-size="22">7</text>
+    <circle class="peak" data-index="8" cx="438" cy="132" r="10" fill="#de912a" stroke="#fff" stroke-width="3"/><text x="429" y="118" font-size="22">8</text>
+    <circle cx="346" cy="207" r="6" fill="#7c9aac"/><text x="338" y="240" font-size="22">5</text>
+    <circle cx="530" cy="232" r="6" fill="#7c9aac"/><text x="523" y="264" font-size="22">4</text>
+    <text x="164" y="360" font-size="22">5 和 4 也是峰，但没有达到阈值</text>
+   </g>
+  </g>
+  <path d="M678 238H711" stroke="#286d91" stroke-width="4" marker-end="url(#arrow)"/>
+  <g id="output">
+   <rect x="727" y="142" width="204" height="191" rx="18" fill="#e2f1fb" stroke="#bfd6e5" stroke-width="2"/>
+   <text x="773" y="184" font-size="22">满足条件</text>
+   <text id="peak-count" data-count="3" x="793" y="252" font-size="28" font-weight="700">3 次</text>
+   <text x="758" y="303" font-size="22">6、7、8 三个峰</text>
+  </g>
+  <text x="30" y="413" font-size="22">同时满足：高于前后读数 ＋ 达到阈值。本图是模拟读数，不是真实步数。</text>
+ </g>
+</svg>

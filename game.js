@@ -6,7 +6,6 @@ const hints={search:['回看游客手里的线索和他说的愿望。','想一�
 let state=null,student=null,awards=[],activityPoints=0,viewStage='search',queue=[],syncing=false,exitData=null,exitResult=null,serviceDraft=null;
 let cacheKey='',walker=null,navRun=0,lastRenderedKey='';
 let hallIntroMode=false;
-const introducedHalls=new Set();
 const pageEventPrefix=`festival-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 let pageEventCount=0;
 function nextEventId(){return `${pageEventPrefix}-${++pageEventCount}-${Math.random().toString(36).slice(2)}`;}
@@ -65,7 +64,14 @@ function updateMap(stage){
  $('barrier').hidden=!(R.stageOf(state)==='nav'&&state.nav.phase===2);
  $('route-layer').replaceChildren();
  document.querySelectorAll('.hotspot').forEach(b=>{const st=b.dataset.stage;b.classList.toggle('active',st===stage);b.classList.toggle('done',!!state[st]?.done);b.classList.toggle('locked',st!==R.stageOf(state)&&!state[st]?.done);});
- document.querySelectorAll('.hall-hotspot').forEach(b=>b.classList.toggle('active',stage===`hall:${b.dataset.hall}`));
+ const hallsOpen=R.galleryUnlocked(state);
+ document.querySelectorAll('.hall-hotspot').forEach(b=>{
+  const hall=window.GalleryModel.halls.find(x=>x.id===b.dataset.hall);
+  b.classList.toggle('active',stage===`hall:${b.dataset.hall}`);
+  b.disabled=!hallsOpen;b.classList.toggle('locked',!hallsOpen);
+  b.title=hallsOpen?hall.name:'完成找活动、带游客、推荐和服务卡后开放';
+  b.setAttribute('aria-label',hallsOpen?`前往${hall.name}`:`${hall.name}，完成四段主线后开放`);
+ });
  const scene=stage===R.stageOf(state)?R.dialogueFor(state):null;
  $('scene-speech').hidden=!scene||scene.done;
  if(scene&&!scene.done)$('scene-speech').textContent=`${scene.npc}：${scene.line}`;
@@ -78,7 +84,9 @@ function renderHints(stage){
 }
 function render(){
  if(!state)return;
- const current=R.stageOf(state),galleryView=viewStage.startsWith('hall:');
+ const current=R.stageOf(state),hallsOpen=R.galleryUnlocked(state);
+ if(viewStage.startsWith('hall:')&&!hallsOpen)viewStage=current;
+ const galleryView=viewStage.startsWith('hall:');
  if(!galleryView&&viewStage!==current&&!state[viewStage]?.done)viewStage=current;
  const stage=viewStage;
  const hallId=galleryView?stage.slice(5):null;
@@ -86,13 +94,14 @@ function render(){
  const missionColumn=document.querySelector('.mission-column');
  missionColumn.classList.toggle('hall-story-mode',galleryView&&hallIntroMode&&hallId!=='hub');
  missionColumn.classList.toggle('hall-experience-mode',galleryView&&!hallIntroMode&&hallId!=='hub');
+ document.querySelector('.game-layout').classList.toggle('hall-learning-layout',galleryView);
  $('student-name').textContent=`${student.classId}班 · ${student.name}`;
  $('points-pill').textContent=`印章积分 ${activityPoints}`;
  $('map-title').textContent=galleryView?(hall?.name||'自由探索体验馆'):titles[stage];
  $('stage-count').textContent=galleryView?'选做体验':stage==='complete'?'完成主线':`${tabs.findIndex(x=>x[0]===stage)+1} / 4`;
  $('mission-eyebrow').textContent=galleryView?'算法应用体验':stage==='complete'?'向导结业':'游客委托';
  $('mission-title').textContent=galleryView?(hall?.name||'自由探索体验馆'):titles[stage];
- $('stage-tabs').innerHTML=tabs.map(([id,label],i)=>`<button class="stage-tab ${id===stage?'current':''} ${state[id]?.done?'done':''}" data-stage="${id}" ${!state[id]?.done&&current!==id?'disabled':''}>${state[id]?.done?'✓ ':''}${i+1}. ${label}</button>`).join('')+(current==='complete'?'<button class="stage-tab" data-stage="complete">结业回访</button>':'')+`<button class="stage-tab ${galleryView?'current':''}" data-hall="hub">自由探索体验馆</button>`;
+ $('stage-tabs').innerHTML=tabs.map(([id,label],i)=>`<button class="stage-tab ${id===stage?'current':''} ${state[id]?.done?'done':''}" data-stage="${id}" ${!state[id]?.done&&current!==id?'disabled':''}>${state[id]?.done?'✓ ':''}${i+1}. ${label}</button>`).join('')+(current==='complete'?'<button class="stage-tab" data-stage="complete">结业回访</button>':'')+`<button class="stage-tab ${galleryView?'current':''}" data-hall="hub" ${hallsOpen?'':'disabled'}>${hallsOpen?'探索体验馆':'体验馆 · 主线完成后开放'}</button>`;
  $('feedback').textContent=state.last?.text||'看看游客的需求，再作出决定。';
  $('feedback').classList.toggle('warn',state.last?.kind==='warn');
  if(galleryView)renderGallery(hallId);
@@ -108,22 +117,28 @@ function render(){
  lastRenderedKey=viewKey;
  window.PageGuide?.enter(stage);
 }
+function galleryInvitation(hallId){
+ const progress=R.galleryProgress(state),next=window.GalleryModel.halls.find(x=>x.id===progress.next);
+ if(hallId&&!progress.visited.includes(hallId))return '';
+ return `<section class="gallery-invitation ${hallId?'compact':''}" aria-label="体验馆参观引导"><span class="eyebrow">${hallId?'本馆已体验':'体验馆已开放'} · 已体验 ${progress.visited.length}/${progress.total} 馆</span><strong>${next?'下一站，继续发现算法的作用':'六座馆都留下了你的体验记录'}</strong><p>${next?`建议前往${esc(next.name)}，先看原理图，再亲手运行。你也可以选择其他馆。`:'可以重看原理、改变条件再比较，也可以返回结业回访整理收获。'}</p>${next?`<button class="primary-button full" type="button" data-hall="${next.id}">${progress.visited.length?'前往下一馆':'开始探索'}：${esc(next.name)} →</button>`:'<button class="primary-button full" type="button" data-stage="complete">返回结业回访</button>'}<button class="text-button" type="button" data-hall="hub">查看全部体验馆</button></section>`;
+}
 function renderGallery(hallId){
  if(hallId==='hub'){
-  $('mission-intro').textContent='每座馆先听一段故事，看算法处理信息的图解，再亲手体验。选做馆不影响主线完成。';
-  $('mission-content').innerHTML=`<div class="gallery-hub">${window.GalleryModel.halls.map(hall=>{const count=state.gallery?.records?.[hall.id]?.length||0;return `<div class="gallery-card"><strong>${esc(hall.name)}</strong><p>${esc(hall.short)}</p><small>${count?`已运行${count}次`:'尚未体验'}</small><button class="secondary-button" data-hall="${hall.id}">走进${esc(hall.name)}</button></div>`;}).join('')}</div>`;
+  const progress=R.galleryProgress(state);
+  $('mission-intro').textContent=`主线已完成，六馆开放。已体验${progress.visited.length}/${progress.total}馆，先看科学原理图，再动手体验。`;
+  $('mission-content').innerHTML=`${galleryInvitation()}<div class="gallery-hub">${window.GalleryModel.halls.map(hall=>{const count=state.gallery?.records?.[hall.id]?.length||0,recommended=hall.id===progress.next;return `<div class="gallery-card ${recommended?'recommended':''}"><strong>${esc(hall.name)}</strong><p>${esc(hall.short)}</p><small>${count?'✓ 已体验':recommended?'建议下一馆':'尚未体验'}</small><button class="secondary-button" data-hall="${hall.id}">走进${esc(hall.name)}</button></div>`;}).join('')}</div>`;
   return;
  }
  const hall=window.GalleryModel.halls.find(x=>x.id===hallId),records=state.gallery?.records?.[hallId]||[];
  if(hallIntroMode){
-  $('mission-intro').textContent=`欢迎来到${hall.place}。先听馆长介绍，看看算法在这里帮人做什么。`;
+  $('mission-intro').textContent=`欢迎来到${hall.place}。沿原理图观察算法怎样处理信息，再开始体验。`;
   $('mission-content').innerHTML=window.GalleryUI.renderIntro(hallId);
-  $('feedback').textContent='先看图解中的输入、处理和结果，再进入体验。';
+  $('feedback').textContent='看原理图，试着说明输入怎样变成结果；有疑问可以继续看图。';
   $('feedback').classList.remove('warn');
   return;
  }
  $('mission-intro').textContent=`${hall.place} · 选一个条件，看算法怎样帮忙。`;
- $('mission-content').innerHTML=window.GalleryUI.renderHall(hallId,records);
+ $('mission-content').innerHTML=window.GalleryUI.renderHall(hallId,records)+galleryInvitation(hallId);
  if(!records.length){$('feedback').textContent='选一个条件运行，再观察算法的输出。';$('feedback').classList.remove('warn');}
  window.GalleryUI.afterRender(hallId,records.at(-1));
 }
@@ -162,9 +177,10 @@ function renderService(){
 }
 async function loadExit(){if(exitData)return;try{const r=await fetch('/api/exit');if(r.ok){exitData=await r.json();render();}}catch{}}
 function renderComplete(){
- $('mission-intro').textContent='三个游客委托和服务卡已完成。现在独立完成四项回访，看看换个情境会怎么做。';
+ $('mission-intro').textContent='主线完成，六座体验馆已开放。按老师安排探索各馆，也可以先完成四项回访。';
  const earned=new Set(awards.map(x=>x.stage));
  $('mission-content').innerHTML=`<div class="stamp-row">${[['search','活动寻访'],['nav','贴心带路'],['reco','懂你推荐'],['service','服务亭开张']].map(([id,label])=>`<span class="stamp ${earned.has(id)?'earned':''}">${earned.has(id)?'✓ ':''}${label}</span>`).join('')}</div><p>活动积分：<strong>${activityPoints}</strong>。四项回访和20题考核另行记录。</p>${!exitData?'<p>正在加载结业回访…</p>':`<form id="exit-form"><p class="small-note">本次为${exitData.form}卷；如果订正后再检验，会换一组情境。</p>${exitData.questions.map((q,i)=>`<fieldset class="exit-question"><legend>${i+1}. ${esc(q.stem)}</legend>${q.options.map((opt,j)=>`<label><input type="radio" name="${q.id}" value="${j}"> ${esc(opt)}</label>`).join('')}</fieldset>`).join('')}<button class="primary-button" type="submit">提交四项回访</button></form>`}${exitResult?`<div class="rank-box">本次回访 ${exitResult.score}分。${exitResult.results.map((x,i)=>`<p>第${i+1}项：${x.correct?'正确':'再想想'}。${esc(x.explanation)}</p>`).join('')}</div>`:''}<p class="small-note">课后或下一课可完成20题完整考核；本节作品与记录现在就能保存。</p><a class="secondary-button" href="/quiz">进入20题完整考核</a>`;
+ $('mission-content').insertAdjacentHTML('afterbegin',galleryInvitation());
  if(!exitData)loadExit();
 }
 function exportRecord(){
@@ -193,10 +209,11 @@ async function init(){
 document.addEventListener('click',event=>{
  const b=event.target.closest('[data-action],[data-stage],[data-hall]');if(!b)return;
  if(b.dataset.hall){
+  if(!R.galleryUnlocked(state)){$('feedback').textContent='先完成找活动、带游客、推荐和服务卡，体验馆随后开放。';$('feedback').classList.add('warn');return;}
   const id=b.dataset.hall;
   if(id==='hub'){viewStage='hall:hub';render();return;}
   const hall=window.GalleryModel.halls.find(x=>x.id===id);if(!hall)return;
-  walker.moveTo(WalkMap.landmarks[hall.landmark],R.stageOf(state)==='nav'&&state.nav.phase===2).then(result=>{if(result.arrived){viewStage=`hall:${id}`;hallIntroMode=!introducedHalls.has(id);render();}});
+  walker.moveTo(WalkMap.landmarks[hall.landmark],false).then(result=>{if(result.arrived&&R.galleryUnlocked(state)){viewStage=`hall:${id}`;hallIntroMode=true;render();}});
   return;
  }
  if(b.dataset.stage){const st=b.dataset.stage,current=R.stageOf(state);if(st===current||state[st]?.done||st==='complete'&&current==='complete'){
@@ -206,7 +223,7 @@ document.addEventListener('click',event=>{
    }else{viewStage=st;render();}
   }else{$('feedback').textContent='先完成当前游客的委托，再前往这个地点。';$('feedback').classList.add('warn');}return;}
  const action=b.dataset.action;
- if(action==='gallery-enter'){introducedHalls.add(viewStage.slice(5));hallIntroMode=false;render();}
+ if(action==='gallery-enter'){hallIntroMode=false;render();}
  else if(action==='gallery-intro'){hallIntroMode=true;render();}
  else if(action==='search-query'){const terms=[...document.querySelectorAll('#term-choices input:checked')].map(x=>x.value);send({type:'search/query',terms});}
  else if(action==='dialogue-choice')send({type:'dialogue/choose',id:b.dataset.id});
